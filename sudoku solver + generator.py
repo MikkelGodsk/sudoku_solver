@@ -266,6 +266,7 @@ def DFS_solve_multisol(sudoku: Sudoku, random_order=False):
 
 def generate(min_filled_in: int) -> Tuple[Sudoku, Sudoku]:
     # Generate a random solution
+    x = None
     solution = DFS_solve(Sudoku([
         [x,x,x, x,x,x, x,x,x],
         [x,x,x, x,x,x, x,x,x],
@@ -278,7 +279,9 @@ def generate(min_filled_in: int) -> Tuple[Sudoku, Sudoku]:
         [x,x,x, x,x,x, x,x,x],
         [x,x,x, x,x,x, x,x,x],
         [x,x,x, x,x,x, x,x,x],
-    ]))    
+    ]), random_order=True)
+    
+    # Drop random cells while maintaining existence and uniqueness of solution
     coordinates = shuffle([(i,j) for i in range(9) for j in range(9)])
     sudoku = copy.deepcopy(solution)
     dropped_cells = 0
@@ -291,7 +294,7 @@ def generate(min_filled_in: int) -> Tuple[Sudoku, Sudoku]:
         sudoku_copy[r,c] = sudoku_copy.value_set
         
         # Solve and check for existence and uniqueness of solution
-        solution_set = DFS_solve_multisol(sudoku_copy, random_order=True)
+        solution_set = DFS_solve_multisol(sudoku_copy)
         if len(solution_set) == 1:
             # If solution exists and is unique, we keep it. Otherwise discard
             sudoku = sudoku_copy
@@ -318,16 +321,20 @@ def test_ambiguous():
 
 def test_generate(k=1):
     sudoku, solution = generate(min_filled_in=0)
-    solved = DFS_solve(sudoku)
+    solved = DFS_solve(sudoku, random_order=True)
     assert solved == solution
     prev_sudoku = sudoku
     prev_solution = solution
+    print(sudoku)
+    print(solution)
     for i in range(1, k):
         sudoku, solution = generate(min_filled_in=0)
-        solved = DFS_solve(sudoku)
+        solved = DFS_solve(sudoku, random_order=True)
         assert solved == solution
         assert prev_sudoku != sudoku   # Very unlikely event: prev_sudoku == sudoku
         assert prev_solution != solution  # Very unlikely event: prev_solution == solution
+        print(sudoku)
+        print(solution)
 
 
 if __name__ == '__main__':
