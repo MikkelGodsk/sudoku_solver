@@ -326,8 +326,8 @@ def test_generate(k=1):
         sudoku, solution = generate(min_filled_in=0)
         solved = DFS_solve(sudoku)
         assert solved == solution
-        assert prev_sudoku != sudoku   # Very unlikely event
-        assert prev_solution != solution  # Very unlikely event
+        assert prev_sudoku != sudoku   # Very unlikely event: prev_sudoku == sudoku
+        assert prev_solution != solution  # Very unlikely event: prev_solution == solution
 
 
 if __name__ == '__main__':
